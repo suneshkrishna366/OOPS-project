@@ -1,0 +1,277 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #001F3F;
+            color: white;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 70px;
+            height: 100vh;
+            background: #004080;
+            color: white;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .menu-bar {
+            font-size: 30px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .menu-item {
+            width: 60px;
+            height: 60px;
+            margin: 15px 0;
+            background: #004080;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            font-size: 28px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .menu-item:hover {
+            background: #007FFF;
+        }
+
+        /* Main Content */
+        .container {
+            width: calc(100% - 80px);
+            margin-left: 80px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #003366;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .top-bar {
+            width: 100%;
+            background-color: #007FFF;
+            padding: 15px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            border-radius: 10px;
+        }
+
+        #addTaskSection {
+            background-color: #004080;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+            box-sizing: border-box;
+            margin-top: 15px;
+        }
+
+        #addTaskSection input[type="text"],
+        #addTaskSection input[type="date"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 8px;
+            background-color: #002B5B;
+            color: white;
+            font-size: 16px;
+        }
+
+        #addTaskSection button {
+            background-color: #0096FF;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #addTaskSection button:hover {
+            background-color: #007FFF;
+            transform: scale(1.05);
+        }
+
+        nav {
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav button {
+            background-color: #00509E;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease-in-out;
+        }
+
+        nav button:hover {
+            background-color: #007FFF;
+            transform: scale(1.1);
+        }
+
+        #taskListContainer {
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #002B5B;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #00509E;
+            display: flex;
+            align-items: center;
+            background-color: #001F3F;
+            margin: 5px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        li input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #00ccff;
+        }
+
+        .overdue {
+            color: #ff6666;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="menu-bar">☰</div>
+        <a href="home.html" class="menu-item">🏠</a> <!-- Home -->
+        <a href="index.html" class="menu-item">📝</a> <!-- Tasks -->
+        <a href="stats.html" class="menu-item">📊</a> <!-- Statistics -->
+        <a href="goals.html" class="menu-item">🔥</a> <!-- Goals -->
+        <a href="settings.html" class="menu-item">⚙️</a> <!-- Settings -->
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="top-bar">Task Manager</div>
+
+        <div id="addTaskSection">
+            <h2>New Task</h2>
+            <input type="text" id="taskInput" placeholder="Enter task description">
+            <input type="date" id="taskDeadline">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+
+        <nav>
+            <button onclick="showTasks('due')">Due</button>
+            <button onclick="showTasks('completed')">Completed</button>
+            <button onclick="showTasks('overdue')">Overdue</button>
+            <button onclick="showTasks('all')">All</button>
+        </nav>
+
+        <div id="taskListContainer">
+            <ul id="taskList"></ul>
+        </div>
+    </div>
+
+    <script>
+        let tasks = [];
+
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const taskDeadline = document.getElementById('taskDeadline');
+            const taskText = taskInput.value.trim();
+            const deadline = taskDeadline.value;
+
+            if (taskText === '') return;
+
+            const task = {
+                id: Date.now(),
+                text: taskText,
+                deadline: deadline,
+                completed: false
+            };
+
+            tasks.push(task);
+            taskInput.value = '';
+            taskDeadline.value = '';
+            renderTasks('due');
+        }
+
+        function toggleComplete(id) {
+            tasks = tasks.map(task =>
+                task.id === id ? { ...task, completed: !task.completed } : task
+            );
+            renderTasks('due');
+        }
+
+        function showTasks(filter) {
+            renderTasks(filter);
+        }
+
+        function renderTasks(filter) {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+
+            let filteredTasks = tasks.filter(task =>
+                filter === 'completed' ? task.completed :
+                filter === 'overdue' ? new Date(task.deadline) < new Date() && !task.completed :
+                filter === 'all' ? true :
+                !task.completed && new Date(task.deadline) >= new Date()
+            );
+
+            filteredTasks.forEach(task => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleComplete(${task.id})">
+                    <span class="${task.completed ? 'completed' : (new Date(task.deadline) < new Date() ? 'overdue' : '')}">${task.text} (Due: ${task.deadline})</span>
+                `;
+                taskList.appendChild(li);
+            });
+        }
+
+        renderTasks('due');
+    </script>
+
+</body>
+</html>

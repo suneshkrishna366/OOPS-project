@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Assessment</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4, #ffdde1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            transition: background 1s ease-in-out;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 500px;
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+        }
+
+        .question-box {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .options button:hover {
+            background: linear-gradient(135deg, #ff5f6d, #fc6767);
+            transform: scale(1.05);
+        }
+
+        .result-box {
+            display: none;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .emoji {
+            font-size: 70px;
+            animation: pop 0.5s ease-in-out;
+        }
+
+        .home-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #007FFF, #00A6FF);
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .home-button:hover {
+            background: linear-gradient(135deg, #00509E, #007FFF);
+            transform: scale(1.05);
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="question-box" class="question-box"></div>
+        <div id="options" class="options"></div>
+        <div id="result-box" class="result-box"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { text: "How are you feeling today?", options: ["Great", "Good", "Okay", "Bad"], points: [3, 2, 1, 0] },
+            { text: "Did you get enough sleep last night?", options: ["Yes", "Somewhat", "Not really", "Not at all"], points: [3, 2, 1, 0] },
+            { text: "How's your energy level?", options: ["Very high", "Moderate", "Low", "Exhausted"], points: [3, 2, 1, 0] },
+            { text: "Are you feeling stressed?", options: ["Not at all", "A little", "Moderate", "Very much"], points: [3, 2, 1, 0] },
+            { text: "Did you exercise today?", options: ["Yes", "A little", "No", "Too tired to exercise"], points: [3, 2, 1, 0] },
+            { text: "Have you eaten healthy meals today?", options: ["Yes", "Somewhat", "Not really", "Not at all"], points: [3, 2, 1, 0] },
+            { text: "How's your productivity today?", options: ["Very productive", "Moderate", "Lazy", "Unproductive"], points: [3, 2, 1, 0] },
+            { text: "Have you spent time doing something you enjoy?", options: ["Yes, a lot", "Somewhat", "A little", "Not at all"], points: [3, 2, 1, 0] },
+            { text: "How's your social interaction today?", options: ["Very social", "Somewhat social", "A little", "None"], points: [3, 2, 1, 0] },
+            { text: "Do you feel optimistic about tomorrow?", options: ["Very much", "Somewhat", "Not really", "Not at all"], points: [3, 2, 1, 0] }
+        ];
+
+        let currentQuestionIndex = 0;
+        let totalScore = 0;
+
+        function loadQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const questionData = questions[currentQuestionIndex];
+                document.getElementById("question-box").innerText = questionData.text;
+                const optionsDiv = document.getElementById("options");
+                optionsDiv.innerHTML = "";
+                questionData.options.forEach((option, index) => {
+                    const button = document.createElement("button");
+                    button.innerText = option;
+                    button.onclick = () => {
+                        totalScore += questionData.points[index];
+                        currentQuestionIndex++;
+                        loadQuestion();
+                    };
+                    optionsDiv.appendChild(button);
+                });
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            let mood = "";
+            let emoji = "";
+            let quote = "";
+
+            if (totalScore >= 25) {
+                mood = "Happy 😊";
+                emoji = "😊";
+                quote = "Happiness is not something ready-made. It comes from your own actions.";
+            } else if (totalScore >= 18) {
+                mood = "Content 😌";
+                emoji = "😌";
+                quote = "Keep going! Every step you take brings you closer to your goals.";
+            } else if (totalScore >= 10) {
+                mood = "Tired 😔";
+                emoji = "😔";
+                quote = "It's okay to rest. Take a deep breath and recharge.";
+            } else {
+                mood = "Stressed 😢";
+                emoji = "😢";
+                quote = "You are stronger than you think. This too shall pass.";
+            }
+
+            document.getElementById("question-box").style.display = "none";
+            document.getElementById("options").style.display = "none";
+            document.getElementById("result-box").innerHTML = `
+                <div class='emoji'>${emoji}</div>
+                <h3>Your Mood: ${mood}</h3>
+                <p>${quote}</p>
+                <button class='home-button' onclick='window.location.href="home.html"'>Back to Home</button>`;
+            document.getElementById("result-box").style.display = "block";
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

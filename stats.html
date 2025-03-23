@@ -1,0 +1,236 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Progress</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #001F3F;
+            color: white;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 80px;
+            height: 100vh;
+            background: #002B5B;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .menu-item {
+            width: 70px;
+            height: 60px;
+            margin: 15px 0;
+            background: #004080;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            font-size: 28px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .menu-item:hover {
+            background: #007FFF;
+        }
+
+        .container {
+            width: calc(100% - 80px);
+            margin-left: 80px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #003366;
+            padding-top: 20px;
+        }
+
+        .top-bar {
+            width: 100%;
+            background-color: #007FFF;
+            padding: 15px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .button-container {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #00509E;
+            color: white;
+            font-size: 16px;
+        }
+
+        .view-button:hover {
+            background: #007FFF;
+        }
+
+        .stats-container, .calendar-container {
+            width: 80%;
+            max-width: 600px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .pie-container {
+            max-width: 300px;
+            margin: auto;
+        }
+
+        canvas {
+            background: #002B5B;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .calendar-container {
+            width: 90%;
+            max-width: 800px;
+            background: #004080;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .day {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            margin: 2px;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 5px;
+            font-size: 14px;
+            background: #002B5B;
+            color: white;
+        }
+
+        .menu-bar {
+            font-size: 30px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .completed {
+            background: #00C853;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="menu-bar">☰</div>
+        <a href="home.html" class="menu-item">🏠</a>
+        <a href="index.html" class="menu-item">📝</a>
+        <a href="stats.html" class="menu-item">📊</a>
+        <a href="goals.html" class="menu-item">🔥</a>
+        <a href="settings.html" class="menu-item">⚙️</a>
+    </div>
+
+    <div class="container">
+        <div class="top-bar">Habit Progress</div>
+
+        <div class="button-container">
+            <button class="view-button" onclick="showView('stats-container')">📊 Bar Graph</button>
+            <button class="view-button" onclick="showView('pie-container')">🥧 Pie Chart</button>
+            <button class="view-button" onclick="showView('calendar-container')">📅 Calendar View</button>
+        </div>
+
+        <div id="stats-container" class="stats-container">
+            <h3>Weekly Completion Rate</h3>
+            <canvas id="barChart"></canvas>
+        </div>
+
+        <div id="pie-container" class="stats-container pie-container">
+            <h3>Habit Category Breakdown</h3>
+            <canvas id="pieChart"></canvas>
+        </div>
+
+        <div id="calendar-container" class="calendar-container">
+            <h3>Streak Calendar</h3>
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <script>
+        function showView(viewId) {
+            document.querySelectorAll('.stats-container, .calendar-container').forEach(el => el.style.display = 'none');
+            document.getElementById(viewId).style.display = 'block';
+        }
+
+        showView('stats-container');
+
+        const ctxBar = document.getElementById('barChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Habit Completion',
+                    data: [3, 5, 2, 6, 7, 4, 6],
+                    backgroundColor: 'rgba(0, 150, 255, 0.6)',
+                    borderColor: 'rgba(0, 150, 255, 1)',
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        const ctxPie = document.getElementById('pieChart').getContext('2d');
+        new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Fitness', 'Learning', 'Productivity', 'Health'],
+                datasets: [{
+                    data: [30, 25, 20, 25],
+                    backgroundColor: ['blue', 'green', 'orange', 'red']
+                }]
+            }
+        });
+
+        function generateCalendar() {
+            const calendar = document.getElementById("calendar");
+            const daysInMonth = moment().daysInMonth();
+            const today = moment().date();
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                let day = document.createElement("div");
+                day.classList.add("day");
+                day.innerText = i;
+                
+                if (i <= today) {
+                    day.classList.add("completed");
+                }
+                
+                calendar.appendChild(day);
+            }
+        }
+
+        generateCalendar();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            background-color: #007BFF;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.pinimg.com/736x/7c/22/3d/7c223dc81c9b874a489c5f4aa15dfd5c.jpg') no-repeat center center/cover;
+            opacity: 0.5;
+        }
+        .login-container {
+            background: rgba(0, 74, 173, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 500px;
+            position: relative;
+            z-index: 1;
+        }
+        .login-text {
+            color: #fff;
+            width: 50%;
+            text-align: left;
+        }
+        .login-text h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .login-text p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .login-form {
+            width: 50%;
+            text-align: center;
+        }
+        input {
+            width: 80%;
+            padding: 12px;
+            margin: 10px auto;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            display: block;
+            background: #f0f0f0;
+        }
+        .login-btn {
+            width: 80%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            transition: 0.3s;
+            background-color: #003d80;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .google-btn, .facebook-btn {
+            width: 70%;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+            background-color: transparent;
+            color: white;
+            border: none;
+            box-shadow: none;
+        }
+        .google-btn {
+            background-color: #0057b3;
+        }
+        .facebook-btn {
+            background-color: #3b5998;
+        }
+        .login-btn:hover {
+            background-color: #002a5c;
+            transform: scale(1.05);
+        }
+        .google-btn:hover {
+            background-color: #00408a;
+            transform: scale(1.05);
+        }
+        .facebook-btn:hover {
+            background-color: #2d4373;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image"></div>
+    <div class="login-container">
+        <div class="login-text">
+            <h2>Welcome Back!</h2>
+            <p>Please sign in to continue.</p>
+        </div>
+        <div class="login-form">
+            <input type="text" placeholder="Username" id="username">
+            <input type="password" placeholder="Password" id="password">
+            
+            <button class="google-btn">Sign in with Google</button>
+            <button class="facebook-btn">Sign in with Facebook</button>
+            <button class="login-btn" onclick="window.location.href='home.html'">Sign In</button>
+            
+        </div>
+    </div>
+</body>
+</html>
